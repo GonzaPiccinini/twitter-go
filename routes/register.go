@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/GonzaPiccinini/twitter-go/db"
 	"github.com/GonzaPiccinini/twitter-go/models"
 )
 

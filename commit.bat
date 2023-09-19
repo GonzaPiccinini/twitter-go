@@ -1,5 +1,5 @@
 git add .
-git commit -m "Primer commit"
+git commit -m "Lambda up"
 git push
 go build main.go
 del main.zip
