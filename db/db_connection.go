@@ -10,7 +10,7 @@ import (
 )
 
 var MONGO_CNN *mongo.Client
-var Collection string
+var Database string
 
 func ConnectDB(ctx context.Context) error {
 	user := ctx.Value(models.Key("user")).(string)
@@ -37,7 +37,7 @@ func ConnectDB(ctx context.Context) error {
 	fmt.Println("-> Successful database connection")
 
 	MONGO_CNN = client
-	Collection = ctx.Value(models.Key("db_collection")).(string)
+	Database = ctx.Value(models.Key("db_Database")).(string)
 
 	return nil
 }
