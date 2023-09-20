@@ -13,7 +13,7 @@ var err error
 
 func InitializeAws() {
 	Ctx = context.TODO()
-	Cfg, err = config.LoadDefaultConfig(Ctx, config.WithDefaultRegion("us-east-1"))
+	Cfg, err = config.LoadDefaultConfig(Ctx, config.WithDefaultRegion("us-east-"))
 
 	if err != nil {
 		panic("Error loading AWS settings ./aws/aws" + err.Error())

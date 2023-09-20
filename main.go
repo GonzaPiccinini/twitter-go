@@ -6,18 +6,13 @@ import (
 	"strings"
 
 	"github.com/GonzaPiccinini/twitter-go/awsgo"
+	"github.com/GonzaPiccinini/twitter-go/consts"
 	"github.com/GonzaPiccinini/twitter-go/db"
 	"github.com/GonzaPiccinini/twitter-go/handlers"
 	"github.com/GonzaPiccinini/twitter-go/models"
 	"github.com/GonzaPiccinini/twitter-go/secretsmanager"
 	"github.com/aws/aws-lambda-go/events"
 	lambda "github.com/aws/aws-lambda-go/lambda"
-)
-
-const (
-	SECRET_NAME string = "SecretName"
-	BUCKET_NAME string = "BucketName"
-	URL_PREFIX  string = "UrlPrefix"
 )
 
 func main() {
@@ -40,7 +35,7 @@ func runLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*eve
 		return res, nil
 	}
 
-	secret, err := secretsmanager.GetSecret(os.Getenv(SECRET_NAME))
+	secret, err := secretsmanager.GetSecret(os.Getenv(consts.SECRET_NAME))
 	if err != nil {
 		res = &events.APIGatewayProxyResponse{
 			StatusCode: 400,
@@ -52,20 +47,20 @@ func runLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*eve
 		return res, nil
 	}
 
-	path := strings.Replace(request.PathParameters["twittergo"], os.Getenv(URL_PREFIX), "", -1)
+	path := strings.Replace(request.PathParameters["twittergo"], os.Getenv(consts.URL_PREFIX), "", -1)
 
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("path"), path)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.PATH), path)
 
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("method"), request.HTTPMethod)
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("body"), request.Body)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.METHOD), request.HTTPMethod)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.BODY), request.Body)
 
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("user"), secret.Username)
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("password"), secret.Password)
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("host"), secret.Host)
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("db_collection"), secret.DbCollection)
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("jwtsign"), secret.JWTSign)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.USER), secret.Username)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.PASSWORD), secret.Password)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.HOST), secret.Host)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.DB_COLLECTION), secret.DbCollection)
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.JWTSIGN), secret.JWTSign)
 
-	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("bucketName"), os.Getenv(BUCKET_NAME))
+	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key(consts.BUCKET_NAME), os.Getenv(consts.BUCKET_NAME))
 
 	// Connecting to database
 	err = db.ConnectDB(awsgo.Ctx)
@@ -96,17 +91,17 @@ func runLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*eve
 }
 
 func validateParams() bool {
-	_, ok := os.LookupEnv(SECRET_NAME)
+	_, ok := os.LookupEnv(consts.SECRET_NAME)
 	if !ok {
 		return ok
 	}
 
-	_, ok = os.LookupEnv(BUCKET_NAME)
+	_, ok = os.LookupEnv(consts.BUCKET_NAME)
 	if !ok {
 		return ok
 	}
 
-	_, ok = os.LookupEnv(URL_PREFIX)
+	_, ok = os.LookupEnv(consts.URL_PREFIX)
 	if !ok {
 		return ok
 	}

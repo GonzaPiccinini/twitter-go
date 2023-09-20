@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/GonzaPiccinini/twitter-go/consts"
 	"github.com/GonzaPiccinini/twitter-go/db"
 	"github.com/GonzaPiccinini/twitter-go/models"
 )
@@ -16,7 +17,7 @@ func Register(ctx context.Context) models.APIResponse {
 
 	fmt.Println("-> Register handler")
 
-	body := ctx.Value(models.Key("body")).(string)
+	body := ctx.Value(models.Key(consts.BODY)).(string)
 	err := json.Unmarshal([]byte(body), &u)
 	if err != nil {
 		r.Message = err.Error()
