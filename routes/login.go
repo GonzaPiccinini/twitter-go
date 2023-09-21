@@ -47,11 +47,11 @@ func Login(ctx context.Context) models.APIResponse {
 		return r
 	}
 
-	_ = models.LoginResponse{
+	loginResponse := models.LoginResponse{
 		Token: token,
 	}
 
-	_, err = json.Marshal(token)
+	tokenMarshaled, err := json.Marshal(loginResponse)
 	if err != nil {
 		fmt.Println("Error marshaling token")
 		r.Message = "invalid email or password"
@@ -61,14 +61,14 @@ func Login(ctx context.Context) models.APIResponse {
 	cookie := &http.Cookie{
 		Name:    "token",
 		Value:   token,
-		Expires: time.Now().Add(time.Hour * 3),
+		Expires: time.Now().Add(time.Hour * 24),
 	}
 
 	cookieStr := cookie.String()
 
 	cookieResponse := &events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       token,
+		Body:       string(tokenMarshaled),
 		Headers: map[string]string{
 			"Content-Type":                "application/json",
 			"Access-Control-Allow-Origin": "*",
@@ -77,7 +77,7 @@ func Login(ctx context.Context) models.APIResponse {
 	}
 
 	r.Status = 200
-	r.Message = token
+	r.Message = string(tokenMarshaled)
 	r.Response = cookieResponse
 	return r
 }

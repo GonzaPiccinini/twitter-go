@@ -24,7 +24,7 @@ func GenerateJWTToken(ctx context.Context, u models.User) (string, error) {
 		"ubication": u.Ubication,
 		"web":       u.Web,
 
-		"exp": time.Now().Add(time.Hour * 3).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
