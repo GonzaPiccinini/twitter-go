@@ -24,12 +24,10 @@ func Login(ctx context.Context) models.APIResponse {
 	body := ctx.Value(models.Key(consts.BODY)).(string)
 	err := json.Unmarshal([]byte(body), &u)
 	if err != nil {
-		fmt.Println("Error unmarshaling body")
 		r.Message = "invalid email or password"
 		return r
 	}
 	if len(u.Email) == 0 {
-		fmt.Println("Invalid email")
 		r.Message = "invalid email or password"
 		return r
 	}
@@ -42,7 +40,6 @@ func Login(ctx context.Context) models.APIResponse {
 
 	token, err := jwt.GenerateJWTToken(ctx, user)
 	if err != nil {
-		fmt.Println("Error generating token")
 		r.Message = "invalid email or password"
 		return r
 	}
@@ -53,7 +50,7 @@ func Login(ctx context.Context) models.APIResponse {
 
 	tokenMarshaled, err := json.Marshal(loginResponse)
 	if err != nil {
-		fmt.Println("Error marshaling token")
+		r.Status = 500
 		r.Message = "invalid email or password"
 		return r
 	}

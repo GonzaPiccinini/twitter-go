@@ -17,7 +17,7 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 	var res models.APIResponse
 	res.Status = 400
 
-	ok, statusCode, message, _ := validateAuthorization(ctx, request)
+	ok, statusCode, message, claims := validateAuthorization(ctx, request)
 	if !ok {
 		res.Status = statusCode
 		res.Message = message
@@ -31,14 +31,20 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 			return routes.Register(ctx)
 		case "login":
 			return routes.Login(ctx)
+		case "createTweet":
+			return routes.CreateTweet(ctx, claims)
 		}
 	case "GET":
 		switch ctx.Value(models.Key(consts.PATH)).(string) {
-
+		case "getProfile":
+			return routes.GetProfile(request)
+		case "getTweets":
+			return routes.GetTweets(request)
 		}
 	case "PUT":
 		switch ctx.Value(models.Key(consts.PATH)).(string) {
-
+		case "editProfile":
+			return routes.EditProfile(ctx, claims)
 		}
 	case "DELETE":
 		switch ctx.Value(models.Key(consts.PATH)).(string) {
