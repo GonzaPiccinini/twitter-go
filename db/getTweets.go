@@ -31,7 +31,7 @@ func GetTweets(ID string, page int64) ([]*models.GetTweets, bool) {
 
 	for cursor.Next(ctx) {
 		var doc models.GetTweets
-		err := cursor.Decode(doc)
+		err := cursor.Decode(&doc)
 		if err != nil {
 			return results, false
 		}
